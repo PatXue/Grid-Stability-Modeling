@@ -1,37 +1,47 @@
 model = "aar";
 handle = load_system(model);
-sim_in = [Simulink.SimulationInput(model)];
-inputs = zeros([2 25]);
+sim_in = Simulink.SimulationInput(model);
 
 % Parameters
 % Demand Response: "final_demand"
-% Solar Panel Response: "solar_cap" and "initial_amp"
+% Solar Panel Response: "solar_cap"
 % Battery Power Capacity: "battery_cap"
 % Virtual Inertia: "inertia_const"
 % Transmission Line "transmission_lim"
-demand_sweep = [1 0.98 0.96 0.94 0.92];
-battery_sweep = [1e-9 500 1000 1500 2000];
-inertia_sweep = [0 1 2 3 4];
-amp_sweep = [0.8792 0.90323 0.91151 0.9173 0.9217];
+demand_sweep = [1 0.99 0.98 0.97 0.96];
+battery_sweep = [0 500 1000 1500 2000];
+inertia_sweep = [0 0.25 0.5 0.75 1];
+solar_sweep = [1 1.025 1.05 1.075 1.1];
 trans_sweep = [1000 2000 3000 4000 5000];
-for i=1:5
-    for j=1:5
-        index = 5*(i-1)+j;
-        inputs(1,index) = inertia_sweep(i);
-        inputs(2,index) = demand_sweep(j);
-    
-        sim_in(index) = Simulink.SimulationInput(model);
-        sim_in(index) = setVariable(sim_in(index),'inertia_const',inputs(1,index),"Workspace",model);
-        sim_in(index) = setVariable(sim_in(index),'final_demand',inputs(2,index),"Workspace",model);
+
+var_sweeps = [demand_sweep; trans_sweep; battery_sweep; inertia_sweep; solar_sweep];
+param_filenames = ["demand" "trans" "storage" "inertia" "solar"];
+var_names = ["final_demand" "transmission_lim" "battery_cap" "inertia_const" "solar_cap"];
+
+inputs = zeros([2 25]);
+
+for p=4:4
+    for q=p+1:5
+        for i=1:5
+            for j=1:5
+                index = 5*(i-1)+j;
+                inputs(1,index) = var_sweeps(p,i);
+                inputs(2,index) = var_sweeps(q,j);
+            
+                sim_in(index) = Simulink.SimulationInput(model);
+                sim_in(index) = setVariable(sim_in(index), var_names(p),inputs(1,index),"Workspace",model);
+                sim_in(index) = setVariable(sim_in(index), var_names(q),inputs(2,index),"Workspace",model);
+            end
+        end
+        
+        out = [inputs; zeros([1 length(inputs)])];
+        sim_out = sim(sim_in, 'ShowSimulationManager', 'on');
+        
+        for i=1:length(inputs)
+            freq_data = getElement(get(sim_out(i),"logsout"),"Frequency 3").Values.Data;
+            out(3,i) = freq_data(1) - min(freq_data);
+        end
+        
+        writematrix(out.', "/MATLAB Drive/AAR/Data/" + param_filenames(p) + "-" + param_filenames(q) + ".csv");
     end
 end
-
-out = [inputs; zeros([1 length(inputs)])];
-sim_out = sim(sim_in, 'ShowSimulationManager', 'on');
-
-for i=1:length(inputs)
-    out(3,i) = min(getElement(get(sim_out(i),"logsout"),"Generator Frequency 3").Values.Data);
-end
-
-out = out.';
-writematrix(out, "output.csv");
