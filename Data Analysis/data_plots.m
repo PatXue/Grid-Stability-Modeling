@@ -1,12 +1,12 @@
-param_names = ["storage" "trans" "inertia" "demand"];
-axis_names = ["Battery Power Cap (MW)" "Transmission Line Cap (MW)" "Inertia Constant (s)" "Final Demand"];
+param_names = ["demand" "trans" "storage" "inertia" "solar"];
+axis_names = ["Final Demand" "Transmission Line Cap (MW)" "Storage Capacity (MW)" "Inertia Constant (s)" "Solar Capacity"];
 
-for i=1:3
-    for j=i+1:4
+for i=1:4
+    for j=i+1:5
         param1 = param_names(i);
         param2 = param_names(j);
 
-        data = readmatrix("Data/" + param1 + "-" + param2 + ".csv");
+        data = readmatrix("../Data/" + param1 + "-" + param2 + ".csv");
         data = data.';
         
         x_data = data(1,1:5:end);
@@ -17,9 +17,9 @@ for i=1:3
         hold on
         xlabel(axis_names(i))
         ylabel(axis_names(j))
-        zlabel("Minimum Frequency (Hz)")
+        zlabel("Frequency Change (Hz)")
         hold off
         
-        %exportgraphics(gca,"Graphs/" + param1 + "-" + param2 + "-graph.png")
+        exportgraphics(gca,"Graphs/" + param1 + "-" + param2 + "-graph.png")
     end
 end
