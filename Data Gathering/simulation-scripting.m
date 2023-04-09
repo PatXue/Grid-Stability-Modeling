@@ -8,10 +8,10 @@ sim_in = Simulink.SimulationInput(model);
 % Battery Power Capacity: "battery_cap"
 % Virtual Inertia: "inertia_const"
 % Transmission Line "transmission_lim"
-demand_sweep = [1 0.99 0.98 0.97 0.96];
+demand_sweep = 0.98:0.005:1;
 battery_sweep = [0 500 1000 1500 2000];
 inertia_sweep = [0 0.25 0.5 0.75 1];
-solar_sweep = [1 1.025 1.05 1.075 1.1];
+solar_sweep = 1:0.0125:1.05;
 trans_sweep = [1000 2000 3000 4000 5000];
 
 var_sweeps = [demand_sweep; trans_sweep; battery_sweep; inertia_sweep; solar_sweep];
@@ -42,6 +42,6 @@ for p=4:4
             out(3,i) = freq_data(1) - min(freq_data);
         end
         
-        writematrix(out.', "/MATLAB Drive/AAR/Data/" + param_filenames(p) + "-" + param_filenames(q) + ".csv");
+        writematrix(out.', "/MATLAB Drive/AAR/Data/Raw Data/" + param_filenames(p) + "-" + param_filenames(q) + ".csv");
     end
 end
