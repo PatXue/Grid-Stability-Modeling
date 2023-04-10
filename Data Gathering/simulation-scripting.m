@@ -1,4 +1,4 @@
-model = "aar";
+model = "main-model";
 handle = load_system(model);
 sim_in = Simulink.SimulationInput(model);
 
@@ -42,6 +42,6 @@ for p=4:4
             out(3,i) = freq_data(1) - min(freq_data);
         end
         
-        writematrix(out.', "/MATLAB Drive/AAR/Data/Raw Data/" + param_filenames(p) + "-" + param_filenames(q) + ".csv");
+        writematrix(out.', "../Data/Raw Data/" + param_filenames(p) + "-" + param_filenames(q) + ".csv");
     end
 end
