@@ -20,6 +20,6 @@ for i=1:4
         zlabel("Frequency Change (Hz)")
         hold off
         
-        exportgraphics(gca,"Graphs/Surface Plots/" + param1 + "-" + param2 + "-graph.png")
+        exportgraphics(gca,"../Graphs/Surface Plots/" + param1 + "-" + param2 + "-graph.png")
     end
 end
