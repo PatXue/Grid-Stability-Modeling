@@ -1,5 +1,5 @@
 param_names = ["demand" "trans" "storage" "inertia" "solar"];
-axis_names = ["Final Demand" "Transmission Line Cap (MW)" "Storage Capacity (MW)" "Inertia Constant (s)" "Solar Capacity"];
+axis_names = ["Demand Reduction (%)" "Transmission Line Cap (%)" "Storage Capacity (%)" "Inertia Constant (s)" "Extra Solar Capacity (%)"];
 
 for i=1:4
     for j=i+1:5
