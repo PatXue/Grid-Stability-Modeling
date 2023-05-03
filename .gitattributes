@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Register MATLAB and Simulink files as binary formats
+*.m binary
+*.slx binary
